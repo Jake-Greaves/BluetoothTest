@@ -2,6 +2,7 @@
 #include "BLE_Module.h"
 #include "system.h"
 #include "Communications.h"
+#include <services/gpio/adi_gpio.h>
 
 #define SPI_CS_NUM      ADI_SPI_CS0
 
@@ -9,6 +10,10 @@
 static uint8_t dummy_rx[SPI_MAX_LENGTH];    //Provisional, try to use drivers to transmit without receiving
 
 extern void Delay_ms(unsigned int mSec);//delay function
+
+//BLE RTS pin value. 1 = flow off(ble sleeps)
+//									 0 = flow on
+uint16_t ble_rts_state;
 
 
 /******************** Local functions ********************/
@@ -57,10 +62,11 @@ uint32_t send_header(uint32_t length, uint8_t crc)
   spi_tx[1] = 0x50;//preamble
   spi_tx[2] = 0x00;//empty
   spi_tx[3] = length&0xFF;//length LSB
+  
   spi_rx[0] = 0x00;
   spi_rx[1] = 0x00;
   spi_rx[2] = 0x00;
- 	spi_rx[3] = 0x00;
+  spi_rx[3] = 0x00;
   
   
   Spi_ReadWrite(spi_tx, 4 , spi_rx,4 );
@@ -145,7 +151,7 @@ uint8_t send_payload(uint8_t const* bin, uint32_t length)
 * Return Value : 0 = Success                                                                    
 *                1 = Failure (See eUartResult in debug mode for adi micro specific info)     
 **********************************************************************************************/
-uint32_t Ble_Spi_Boot(uint8_t const* bin, uint32_t length)
+uint32_t Ble_Spi_Boot(uint8_t const * bin, uint32_t length)
 {
   uint8_t crc;//check value
   uint8_t header_ack;//header acknowledgement
@@ -155,7 +161,7 @@ uint32_t Ble_Spi_Boot(uint8_t const* bin, uint32_t length)
   //Init GPIOs for RST and Indicator LED
   adi_gpio_SetHigh(BLE_LED_PORT, BLE_LED_PIN);
   adi_gpio_OutputEnable(BLE_LED_PORT, BLE_LED_PIN, true);//BLE Ready LED
-  adi_gpio_SetHigh(BLE_LED_PORT, BLE_LED_PIN);
+  adi_gpio_SetHigh(BLE_RST_PORT, BLE_RST_PIN);
   adi_gpio_OutputEnable(BLE_RST_PORT, BLE_RST_PIN, true);//BLE Reset Pin
   
   //Initialize SPI
@@ -197,8 +203,79 @@ uint32_t Ble_Spi_Boot(uint8_t const* bin, uint32_t length)
   if(attempt == MAX_ATTEMPTS)
     return 1;
   
-  //On successful boot, D51 goes out
+  //On successful boot, D51 is enabled
   adi_gpio_SetLow(BLE_LED_PORT, BLE_LED_PIN);
   return 0;
   
+}
+
+uint8_t Ble_Uart_Write(char* TxBuffer)
+{
+	//set mux to BLE module
+	Uart_Mux(BLE_MUX);
+
+	//wake BLE
+	Ble_Wake();
+	
+	//wait until BLE is awake
+	Ble_WaitUntilAvailable();
+	
+	//call UART function
+	Uart_Write(TxBuffer);
+	
+	return 0;
+}
+
+uint8_t Ble_Uart_Read(char* RxBuffer, int length)
+{
+	//set mux to BLE module
+	Uart_Mux(BLE_MUX);
+	
+	//wake BLE
+	Ble_Wake();
+	
+	//wait until BLE is awake
+	Ble_WaitUntilAvailable();
+	
+	//call UART function
+	Uart_Read(RxBuffer, length);
+	
+	return 0;
+}
+
+uint8_t Ble_Uart_ReadWrite(char *TxBuffer, char* RxBuffer, int length)
+{
+	//set mux to BLE module
+	Uart_Mux(BLE_MUX);
+	
+	//wake BLE
+	Ble_Wake();
+		
+	//wait until BLE is awake
+	Ble_WaitUntilAvailable();
+	
+	//call UART function
+	Uart_ReadWrite(TxBuffer, RxBuffer, length);
+	
+	return 0;
+}
+
+void Ble_WaitUntilAvailable(void)
+{
+	//poll RTS to determine if BLE is awake
+	adi_gpio_GetData(BLE_RTS_PORT, BLE_RTS_PIN, &ble_rts_state);
+	
+	//wait until BLE is available
+	while(ble_rts_state)
+	{
+		adi_gpio_GetData(BLE_RTS_PORT, BLE_RTS_PIN, &ble_rts_state);
+	}
+}
+
+void Ble_Wake(void)
+{
+	//toggle CTS pin to activate EXT wake interrupt
+	adi_gpio_SetLow(BLE_CTS_PORT, BLE_CTS_PIN);
+	adi_gpio_SetHigh(BLE_CTS_PORT, BLE_CTS_PIN);
+	adi_gpio_SetLow(BLE_CTS_PORT, BLE_CTS_PIN);
 }

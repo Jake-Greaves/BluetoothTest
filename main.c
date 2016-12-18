@@ -4,11 +4,13 @@
 #include <system.h>
 #include "common.h"
 #include "Communications.h"
-#include "sps_device_580.h"
+#include "sps_device_580_FINAL.h"
 
 
-#define BLE_BINARY sps_device_580_bin
+#define BLE_BINARY sps_device_580_Final_bin
 
+char BLE_TxPayload[255];
+char BLE_RxBuffer[255];
 
 /* Pin muxing */
 extern int32_t adi_initpinmux(void);
@@ -72,36 +74,24 @@ unsigned char Micro_Init(void)
 void main(void)
 {
   char err;
-  int i = 0;
   
   err = Micro_Init();
   if(err)
   {
     DEBUG_MESSAGE("Micro failed to boot\n");
-  }
-  
-  //BOOT BLE MODULE
-  err = Ble_Spi_Boot(BLE_BINARY, IMAGE_SIZE);
-  if(err)
-  {
+	}
+	
+	if(Ble_Spi_Boot(BLE_BINARY, IMAGE_SIZE) != 0)
     DEBUG_MESSAGE("Dialog14580 failed to boot\n");
-  }
-  
-  Delay_ms(2000);
-  
-  err = Uart_Init();
-  if(err)
-  {
-    DEBUG_MESSAGE("UART failed to boot\n");
-  }
-  while(1)
-  {
-    sprintf(BLE_Payload, "%i", i);
-    Uart_Read(2);
-    DEBUG_MESSAGE(BLE_Payload);
-    i++;
-    
-    Delay_ms(1000);
-  }
-        
+	
+	Uart_Init();
+	
+	while(1)
+	{
+		sprintf(BLE_TxPayload, "Hello World!\n");
+		Ble_Uart_Write(BLE_TxPayload);
+		//DEBUG_MESSAGE(BLE_RxBuffer);
+    Delay_ms(500);
+	}
+
 }

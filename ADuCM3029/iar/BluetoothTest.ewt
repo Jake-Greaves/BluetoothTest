@@ -2326,7 +2326,7 @@
   <group>
     <name>BLE Source</name>
     <file>
-      <name>$PROJ_DIR$\..\..\sps_device_580.h</name>
+      <name>$PROJ_DIR$\..\..\sps_device_580_FINAL.h</name>
     </file>
   </group>
   <group>

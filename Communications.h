@@ -23,8 +23,24 @@
 /******************************************************************************/
    
 #define UART_DEVICE_NUM         0
-
 #define UART_MEMORY_SIZE    (ADI_UART_BIDIR_MEMORY_SIZE)
+
+#define BLE_RTS_PORT	ADI_GPIO_PORT0
+#define BLE_RTS_PIN 	ADI_GPIO_PIN_4
+
+#define BLE_CTS_PORT	ADI_GPIO_PORT0
+#define BLE_CTS_PIN 	ADI_GPIO_PIN_5
+/******************************************************************************/
+/* Mux driver parameters                                                     */
+/******************************************************************************/
+
+#define MUX_PORT	ADI_GPIO_PORT0
+#define MUX_PIN 	ADI_GPIO_PIN_15
+
+typedef enum{
+							BLE_MUX = 0,
+							SDMP_MUX
+		   			}UART_DEVICE;
 
 /*
                     Boudrate divider for PCLK-26000000
@@ -99,10 +115,10 @@ unsigned char Uart_Init(void);
 unsigned char Uart_Close(void);
 
 //setup buffers to read and write to UART device initialized by init UART
-unsigned char Uart_ReadWrite(char* TxBuffer, int length);
+unsigned char Uart_ReadWrite(char* TxBuffer, char* RxBuffer, int length);
 
 //setup buffers to read UART
-unsigned char Uart_Read(int length);
+unsigned char Uart_Read(char* RxBuffer, int length);
 
 //setup buffers to write to UART
 unsigned char Uart_Write(char *string);
@@ -119,4 +135,5 @@ unsigned char Spi_ReadWrite(uint8_t const * _arrayW, uint16_t _lengthW, uint8_t*
 //write to SPI
 unsigned char Spi_Write(uint8_t const * _array, uint8_t _length);
 
+unsigned char Uart_Mux(int Device);
 #endif /* _COMMUNICATION_H_ */

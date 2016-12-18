@@ -20,10 +20,12 @@
 #define RESET_LENGTH     10 //ms
 #define MAX_ATTEMPTS     5000
 
-#define BLE_RST_PIN     ADI_GPIO_PIN_12
 #define BLE_RST_PORT    ADI_GPIO_PORT0
-#define BLE_LED_PIN    ADI_GPIO_PIN_4
+#define BLE_RST_PIN     ADI_GPIO_PIN_12
+
 #define BLE_LED_PORT    ADI_GPIO_PORT2
+#define BLE_LED_PIN    ADI_GPIO_PIN_4
+
 
 #define RESET_LENGTH     10 //ms
 
@@ -36,5 +38,21 @@ uint32_t Ble_Spi_Boot(uint8_t const * bin, uint32_t length);
 
 //calculate check value
 uint8_t calc_crc(uint8_t const * bin, uint32_t length);
+
+//Write to BLE over UART
+uint8_t Ble_Uart_Write(char* TxBuffer);
+
+//Read from BLE over UART
+uint8_t Ble_Uart_Read(char* RxBuffer, int length);
+
+//Read/Write BLE over UART
+uint8_t Ble_Uart_ReadWrite(char *TxBuffer, char* RxBuffer, int length);
+
+//wait until BLE is awake
+void Ble_WaitUntilAvailable(void);
+
+//wake ble by toggling cts pin
+void Ble_Wake(void);
+
 
 #endif /* __DIALOG_SPI_M350_H */

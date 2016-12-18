@@ -3,12 +3,11 @@
 #include <drivers/uart/adi_uart.h>
 #include <drivers/spi/adi_spi.h>
 #include "common.h"
-
 #include "Communications.h"
+#include <services/gpio/adi_gpio.h>
 
 uint8_t                 UartDeviceMem[UART_MEMORY_SIZE];//UART memory size
 ADI_UART_HANDLE         hUartDevice;//UART device handle
-unsigned char 	        RxBuffer[255];//UART receive buffer
 ADI_UART_RESULT         eUartResult;//UART error variable
 bool data_sent =        false;//UART data_sent flag
 bool data_received =    false;//UART data_recieved flag
@@ -20,13 +19,6 @@ static uint8_t          SPIMem[ADI_SPI_MEMORY_SIZE];//SPI memory size
 static ADI_SPI_TRANSCEIVER transceive;//transceive struct for SPI Read/Writes
 
 
-void Print_RxBuffer()
-{
-  if(data_received == true)
-    {
-      DEBUG_MESSAGE(RxBuffer);
-    }
-}
 
 /********************************************************************
 * UART Interrupt callback                                            *
@@ -46,7 +38,6 @@ void UARTCallback( void *pAppHandle, uint32_t nEvent, void *pArg)
         case ADI_UART_EVENT_RX_BUFFER_PROCESSED:
                 adi_uart_EnableRx(hUartDevice, false);//disable rx buffer
                 data_received = true;
-                Print_RxBuffer();
                 break;
                 
     default: break;
@@ -70,16 +61,14 @@ unsigned char Uart_Init(void)
                 UartDeviceMem,
                 UART_MEMORY_SIZE,
                 &hUartDevice);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("UART open failed",eUartResult,ADI_UART_SUCCESS);
   
   //configure UART device with NO-PARITY, ONE STOP BIT and 8bit word length. 
   eUartResult = adi_uart_SetConfiguration(hUartDevice,
                             ADI_UART_NO_PARITY,
-                            ADI_UART_ONE_AND_HALF_TWO_STOPBITS,
+                            ADI_UART_ONE_STOPBIT,
                             ADI_UART_WORDLEN_8BITS);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("UART config failed",eUartResult,ADI_UART_SUCCESS);
   
   //set baud rate at 115200
   eUartResult = adi_uart_ConfigBaudRate(hUartDevice,
@@ -87,17 +76,23 @@ unsigned char Uart_Init(void)
                           UART_DIV_M_115200,
                           UART_DIV_N_115200,
                           UART_OSR_115200);
+	DEBUG_RESULT("UART config failed",eUartResult,ADI_UART_SUCCESS);
 	
 	//register callback
   adi_uart_RegisterCallback(hUartDevice,UARTCallback,hUartDevice);
-		
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
-  else
+  DEBUG_RESULT("UART callback not registered",eUartResult,ADI_UART_SUCCESS);
+	
+	//init ble flow control uart pins
+	adi_gpio_InputEnable(BLE_RTS_PORT, BLE_RTS_PIN, true);
+	adi_gpio_OutputEnable(BLE_CTS_PORT, BLE_CTS_PIN, true);
+	
+	//init mux control
+	adi_gpio_OutputEnable(MUX_PORT, MUX_PIN, true);
+	
     return 0;
 }
 
-
+	
 /**********************************************************************************************
 * Function Name: UART_Close                                                                   
 * Description  : This function releases a UART handle as initialised by Uart_Init
@@ -109,9 +104,8 @@ unsigned char Uart_Close(void)
 {
   //close Uart device
   eUartResult = adi_uart_Close(hUartDevice);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
-  else
+  DEBUG_RESULT("UART not closed",eUartResult,ADI_UART_SUCCESS);
+  
     return 0;
 }
 
@@ -125,7 +119,7 @@ unsigned char Uart_Close(void)
 * Return Value : 0 = Success                                                                    
 *                1 = Failure (See eUartResult in debug mode for adi micro specific info)     
 **********************************************************************************************/
-unsigned char Uart_ReadWrite(char *TxBuffer, int length)
+unsigned char Uart_ReadWrite(char *TxBuffer, char* RxBuffer, int length)
 {
   //clear flags
   data_sent = false;
@@ -133,12 +127,10 @@ unsigned char Uart_ReadWrite(char *TxBuffer, int length)
   
   //ensure data transfer is disabled for submitting buffers
   eUartResult = adi_uart_EnableRx(hUartDevice,false);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not disabled",eUartResult,ADI_UART_SUCCESS);
   
   eUartResult = adi_uart_EnableTx(hUartDevice,false); 
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("TxBuffer not disabled",eUartResult,ADI_UART_SUCCESS);
   
   //length of string
   int16_t size_l = 0; 
@@ -149,31 +141,23 @@ unsigned char Uart_ReadWrite(char *TxBuffer, int length)
 
   //submit RxBuffer to receive data
   eUartResult = adi_uart_SubmitRxBuffer(hUartDevice, RxBuffer, length);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not submitted",eUartResult,ADI_UART_SUCCESS);
   
   //submit TxBuffer for sending data
   eUartResult = adi_uart_SubmitTxBuffer(hUartDevice, TxBuffer, size_l);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("TxBuffer not submitted",eUartResult,ADI_UART_SUCCESS);
   
   // Enable the Data flow for Rx. This is disabled by UARTCallback
   eUartResult = adi_uart_EnableRx(hUartDevice,true);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not enabled",eUartResult,ADI_UART_SUCCESS);
   
   // Enable the Data flow for Tx. This is disabled by UARTCallback
   eUartResult = adi_uart_EnableTx(hUartDevice,true); 
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("TxBuffer not enabled",eUartResult,ADI_UART_SUCCESS);
   
-  else
-    //wait for data sent
-    while(data_sent == false)
-    {
-      Delay_ms(10);
-    }
-  
+    //wait for data sent and received
+    while((data_sent & data_received) == false);
+		
     return 0;
 }
      
@@ -186,36 +170,28 @@ unsigned char Uart_ReadWrite(char *TxBuffer, int length)
 * Return Value : 0 = Success                                                                    
 *                1 = Failure (See eUartResult in debug mode for adi micro specific info)     
 **********************************************************************************************/
-unsigned char Uart_Read(int length)
+unsigned char Uart_Read(char* RxBuffer, int length)
 {
   //clear flag
   data_received = false;
   
   //ensure data transfer is disabled for submitting buffers
   eUartResult = adi_uart_EnableRx(hUartDevice,false);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not disabled",eUartResult,ADI_UART_SUCCESS);
 
   //'empty' RxBuffer using NULL char
   RxBuffer[0] = '\0';
 
   //submit RxBuffer to receive data
   eUartResult = adi_uart_SubmitRxBuffer(hUartDevice, RxBuffer, length);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not submitted",eUartResult,ADI_UART_SUCCESS);
   
   // Enable the Data flow for Rx. This is disabled by UARTCallback
   eUartResult = adi_uart_EnableRx(hUartDevice,true);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("RxBuffer not enabled",eUartResult,ADI_UART_SUCCESS);
   
-  else
-    
-    //wait for data sent
-    while(data_received == false)
-    {
-      Delay_ms(10);
-    }
+  //wait for data received
+  while(data_received == false);
   
     return 0;
 }
@@ -236,8 +212,7 @@ unsigned char Uart_Write(char* TxBuffer)
   
   //ensure data transfer is disabled for submitting buffers
   eUartResult = adi_uart_EnableTx(hUartDevice,false); 
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("Tx transfer not disabled",eUartResult,ADI_UART_SUCCESS);
   
   //length of string
   int16_t size_l = 0; 
@@ -245,23 +220,37 @@ unsigned char Uart_Write(char* TxBuffer)
   
   //submit TxBuffer for sending data
   eUartResult = adi_uart_SubmitTxBuffer(hUartDevice, TxBuffer, size_l);
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("TxBuffer not submitted",eUartResult,ADI_UART_SUCCESS);
   
   // Enable the Data flow for Tx. This is disabled by UARTCallback
   eUartResult = adi_uart_EnableTx(hUartDevice,true); 
-  if(eUartResult != ADI_UART_SUCCESS)
-    return 1;
+  DEBUG_RESULT("Tx transfer not enabled",eUartResult,ADI_UART_SUCCESS);
   
-  else
-    
     //wait for data sent
-    while(data_sent == false)
-    {
-      Delay_ms(10);
-    }
+    while(data_sent == false);
   
     return 0;
+}
+
+
+/**********************************************************************************************
+* Function Name: UART_Mux                                                                  
+* Description  : This function muxes UART Rx and Tx signals to seperate devices
+* Arguments    : Device = selects action on Mux                                                                       
+* Return Value : 0 = Success                                                                    
+*                1 = Failure (See eUartResult in debug mode for adi micro specific info)     
+**********************************************************************************************/
+unsigned char Uart_Mux(int Device)
+{
+  switch(Device)
+	{
+		case BLE_MUX: adi_gpio_SetLow(MUX_PORT, MUX_PIN);
+								break;
+		case SDMP_MUX: adi_gpio_SetHigh(MUX_PORT, MUX_PIN);
+								break;
+		default: return 1;
+	}
+	return 0;
 }
 
 
