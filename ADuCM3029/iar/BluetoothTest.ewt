@@ -2365,6 +2365,9 @@
   <file>
     <name>$PROJ_DIR$\..\pinMuxBLE.c</name>
   </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\Placeholder_TempInterface.c</name>
+  </file>
 </project>
 
 

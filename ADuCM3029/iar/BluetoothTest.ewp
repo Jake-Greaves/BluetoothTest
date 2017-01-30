@@ -34,20 +34,20 @@
         <option>
           <name>Input variant</name>
           <version>3</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>Input description</name>
-          <state>Automatic choice of formatter.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
           <version>2</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>Output description</name>
-          <state>Automatic choice of formatter.</state>
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.2.11970</state>
+          <state>7.80.3.12143</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -136,7 +136,7 @@
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibThreads</name>
@@ -181,7 +181,7 @@
         <debug>1</debug>
         <option>
           <name>CCDefines</name>
-          <state></state>
+          <state>NDEBUG</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -246,7 +246,7 @@
         </option>
         <option>
           <name>CCDebugInfo</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IEndianMode</name>
@@ -599,7 +599,7 @@
         <option>
           <name>OOCOutputFormat</name>
           <version>3</version>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OCOutputOverride</name>
@@ -607,7 +607,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state></state>
+          <state>BluetoothTest.hex</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -615,7 +615,7 @@
         </option>
         <option>
           <name>OOCObjCopyEnable</name>
-          <state>0</state>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -762,7 +762,7 @@
         </option>
         <option>
           <name>IlinkExtraOptions</name>
-          <state></state>
+          <state>--keep __checksum</state>
         </option>
         <option>
           <name>IlinkLowLevelInterfaceSlave</name>
@@ -802,16 +802,16 @@
         </option>
         <option>
           <name>FillerEnd</name>
-          <state>0x0</state>
+          <state>0x7FB</state>
         </option>
         <option>
           <name>CrcSize</name>
           <version>0</version>
-          <state>1</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcAlign</name>
-          <state>1</state>
+          <state>4</state>
         </option>
         <option>
           <name>CrcPoly</name>
@@ -829,11 +829,11 @@
         </option>
         <option>
           <name>CrcInitialValue</name>
-          <state>0x0</state>
+          <state>0xFFFFFFFF</state>
         </option>
         <option>
           <name>DoCrc</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IlinkBE8Slave</name>
@@ -873,7 +873,7 @@
         </option>
         <option>
           <name>IlinkCrcUseAsInput</name>
-          <state>1</state>
+          <state>0</state>
         </option>
         <option>
           <name>IlinkOptInline</name>
@@ -918,12 +918,12 @@
         <option>
           <name>CrcAlgorithm</name>
           <version>1</version>
-          <state>1</state>
+          <state>2</state>
         </option>
         <option>
           <name>CrcUnitSize</name>
           <version>0</version>
-          <state>0</state>
+          <state>2</state>
         </option>
         <option>
           <name>IlinkThreadsSlave</name>
@@ -1002,7 +1002,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state></state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -1011,7 +1011,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state></state>
+          <state>Automatic choice of formatter.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -1033,7 +1033,7 @@
         </option>
         <option>
           <name>RTDescription</name>
-          <state></state>
+          <state>Use the normal configuration of the C/C++ runtime library. No locale interface, C locale, no file descriptor support, no multibytes in printf and scanf, and no hex floats in strtod.</state>
         </option>
         <option>
           <name>OGProductVersion</name>
@@ -1041,7 +1041,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state></state>
+          <state>7.80.3.12143</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1053,7 +1053,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state></state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -1087,7 +1087,7 @@
         </option>
         <option>
           <name>RTConfigPath2</name>
-          <state></state>
+          <state>$TOOLKIT_DIR$\INC\c\DLib_Config_Normal.h</state>
         </option>
         <option>
           <name>GBECoreSlave</name>
@@ -1096,7 +1096,7 @@
         </option>
         <option>
           <name>OGUseCmsis</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
@@ -1113,7 +1113,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>-</state>
+          <state>Default	None</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -1258,7 +1258,7 @@
         </option>
         <option>
           <name>OutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>CCLibConfigHeader</name>
@@ -1274,7 +1274,8 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state></state>
+          <state>$PROJ_DIR$\..\..\inc</state>
+          <state>$PROJ_DIR$\..\..\inc\config</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1303,7 +1304,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>1</state>
+          <state>3</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1516,7 +1517,7 @@
         </option>
         <option>
           <name>AOutputFile</name>
-          <state></state>
+          <state>$FILE_BNAME$.o</state>
         </option>
         <option>
           <name>AMultibyteSupport</name>
@@ -1570,7 +1571,7 @@
         </option>
         <option>
           <name>OOCOutputFile</name>
-          <state></state>
+          <state>BluetoothTest.srec</state>
         </option>
         <option>
           <name>OOCCommandLineProducer</name>
@@ -1625,7 +1626,7 @@
         </option>
         <option>
           <name>IlinkOutputFile</name>
-          <state>###Unitialized###</state>
+          <state>BluetoothTest.out</state>
         </option>
         <option>
           <name>IlinkDebugInfoEnable</name>
@@ -1689,7 +1690,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>lnk0t.icf</state>
+          <state>$TOOLKIT_DIR$\CONFIG\generic_cortex.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1749,7 +1750,7 @@
         </option>
         <option>
           <name>IlinkProgramEntryLabel</name>
-          <state></state>
+          <state>__iar_program_start</state>
         </option>
         <option>
           <name>DoFill</name>
@@ -1979,6 +1980,9 @@
   </file>
   <file>
     <name>$PROJ_DIR$\..\pinMuxBLE.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\Placeholder_TempInterface.c</name>
   </file>
 </project>
 

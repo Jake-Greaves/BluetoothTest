@@ -89,7 +89,7 @@
         </option>
         <option>
           <name>OCLastSavedByProductVersion</name>
-          <state>7.70.1.11471</state>
+          <state>7.80.3.12143</state>
         </option>
         <option>
           <name>UseFlashLoader</name>
@@ -898,7 +898,7 @@
         <option>
           <name>CCJLinkResetList</name>
           <version>6</version>
-          <state>12</state>
+          <state>14</state>
         </option>
         <option>
           <name>CCJLinkInterfaceCmdLine</name>
@@ -963,7 +963,7 @@
         </option>
         <option>
           <name>CCCpuClockEdit</name>
-          <state></state>
+          <state>72.0</state>
         </option>
         <option>
           <name>CCSwoClockAuto</name>
@@ -1212,7 +1212,7 @@
         </option>
         <option>
           <name>CCSTLinkResetList</name>
-          <version>1</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -1402,7 +1402,7 @@
       <name>XDS100_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>5</version>
+        <version>6</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -1555,6 +1555,14 @@
           <name>CCXds100ProbeList</name>
           <version>0</version>
           <state>2</state>
+        </option>
+        <option>
+          <name>CCXds100SWOPortRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCXds100SWOPort</name>
+          <state>1</state>
         </option>
       </data>
     </settings>
@@ -2843,7 +2851,7 @@
         </option>
         <option>
           <name>CCSTLinkResetList</name>
-          <version>1</version>
+          <version>2</version>
           <state>0</state>
         </option>
         <option>
@@ -3033,7 +3041,7 @@
       <name>XDS100_ID</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>5</version>
+        <version>6</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -3186,6 +3194,14 @@
           <name>CCXds100ProbeList</name>
           <version>0</version>
           <state>2</state>
+        </option>
+        <option>
+          <name>CCXds100SWOPortRadio</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCXds100SWOPort</name>
+          <state>1</state>
         </option>
       </data>
     </settings>

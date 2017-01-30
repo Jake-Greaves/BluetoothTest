@@ -11,8 +11,8 @@ static uint8_t dummy_rx[SPI_MAX_LENGTH];    //Provisional, try to use drivers to
 
 extern void Delay_ms(unsigned int mSec);//delay function
 
-//BLE RTS pin value. 1 = flow off(ble sleeps)
-//									 0 = flow on
+//BLE RTS pin value.    1 = flow off(ble sleeps)
+//		        0 = flow on
 uint16_t ble_rts_state;
 
 
@@ -212,7 +212,7 @@ uint32_t Ble_Spi_Boot(uint8_t const * bin, uint32_t length)
 uint8_t Ble_Uart_Write(char* TxBuffer)
 {
 	//set mux to BLE module
-	Uart_Mux(BLE_MUX);
+	//Uart_Mux(BLE_MUX);
 
 	//wake BLE
 	Ble_Wake();
@@ -277,5 +277,6 @@ void Ble_Wake(void)
 	//toggle CTS pin to activate EXT wake interrupt
 	adi_gpio_SetLow(BLE_CTS_PORT, BLE_CTS_PIN);
 	adi_gpio_SetHigh(BLE_CTS_PORT, BLE_CTS_PIN);
+        Delay_ms(10);
 	adi_gpio_SetLow(BLE_CTS_PORT, BLE_CTS_PIN);
 }
