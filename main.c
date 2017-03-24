@@ -1,31 +1,25 @@
 
-
 #include "BLE_Module.h"
 #include <system.h>
 #include "common.h"
 #include "Communications.h"
-#include "sps_device_580_FINAL.h"
+#include "Wireless_Sense_Module.h"
 #include "Placeholder_TempInterface.h"
+#include "ADuCM3029_Sleep_Interface.h"
+#include "App_Interface.h"
+#include "LibIIO_Interface.h"
 
-#define BLE_BINARY sps_device_580_Final_bin
+#define BLE_BINARY sps_device_580_bin
 
-#undef JLINK_DEBUGGING
-
-char BLE_TxPayload[255];
-char BLE_RxBuffer[255];
-
-/* Pin muxing */
+//Pin muxing
 extern int32_t adi_initpinmux(void);
 
-
-static uint8_t GPIOCallbackMem[ADI_GPIO_MEMORY_SIZE];
-char BLE_Payload[255];
-
-//communications flag and RxBuffer
+//communications flag for commands
 extern bool data_received;
-extern unsigned char RxBuffer[255];
 
+bool deep_Sleep = true;
 
+//rudimentary delay
 void Delay_ms(unsigned int mSec)
 {
   int d1, d2;
@@ -42,7 +36,10 @@ void Delay_ms(unsigned int mSec)
 
 unsigned char Micro_Init(void)
 {
-  /* Clock initialization */
+    //GPIO memory for init
+    static uint8_t GPIOCallbackMem[ADI_GPIO_MEMORY_SIZE];
+  
+    //Clock initialization
     SystemInit();
     
     //set pins
@@ -75,37 +72,48 @@ unsigned char Micro_Init(void)
 }
 
 
-void main(void)
+int main(void)
 {
   char err;
   
+  //init micro
   err = Micro_Init();
-  
-#ifdef JLINK_DEBUGGING
   if(err)
-  {
     DEBUG_MESSAGE("Micro failed to boot\n");
-  }
-#endif
   
-  if(Ble_Spi_Boot(BLE_BINARY, IMAGE_SIZE) != 0)
-  {
-#ifdef JLINK_DEBUGGING
-    DEBUG_MESSAGE("Dialog14580 failed to boot\n");
-#endif
-  }
+  //boot BLE
+  if(Ble_Spi_Boot((uint8_t const*)BLE_BINARY, IMAGE_SIZE) != 0)
+    return 1;
   
+  //init UART comms
   Uart_Init();
+  
+  //reset Sense1000 on power cycle
+  Sense_Deactivate();
+    
+  //ensure SENSE is on
+  Sense_Activate();
+  
+  //Read/Write Attributes test
+  //char readDevAttr[] = "READ_ATTR iio:device0 PowerMode";
+  //char readChannelAttr[] = "READ_ATTR iio:device0 INPUT temp1 SensorType";
+  //char writeChannelAttr[] = "WRITE_ATT iio:device0 INPUT temp1 SensorType T";
+  //App_Read_Command(readDevAttr);
+  
+  //WIP. Currently gets stuck reading xml file from device
+  //App_Parse_Print_Xml();
+  
+  //sanity check. Clear command received flag
+  data_received = false;
   
   while(1)
   {
-    getTempVals(BLE_TxPayload);
-    Ble_Uart_Write(BLE_TxPayload);
     
-#ifdef JLINK_DEBUGGING
-    DEBUG_MESSAGE(BLE_TxPayload);
-#endif
+    App_Read_Command();
     
-    Delay_ms(500);
-  }
-}
+  }//while loop end
+
+}//main end
+
+
+

@@ -16,6 +16,6 @@
 
 
 void getTempVals(char* Buff);
-
+void getMockXml(char* Buff);
 
 #endif /* __PLACEHOLDER_TEMPINTERFACE_H */

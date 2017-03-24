@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -246,7 +246,7 @@
         </option>
         <option>
           <name>CCDebugInfo</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>IEndianMode</name>
@@ -1942,7 +1942,7 @@
   <group>
     <name>BLE Source</name>
     <file>
-      <name>$PROJ_DIR$\..\..\sps_device_580_FINAL.h</name>
+      <name>$PROJ_DIR$\..\..\Wireless_Sense_Module.h</name>
     </file>
   </group>
   <group>
@@ -1960,6 +1960,9 @@
       <name>$PROJ_DIR$\..\..\src\spi\adi_spi.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\tmr\adi_tmr.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\uart\adi_uart.c</name>
     </file>
     <file>
@@ -1975,6 +1978,21 @@
       <name>$PROJ_DIR$\..\..\src\system.c</name>
     </file>
   </group>
+  <file>
+    <name>$PROJ_DIR$\..\..\ADuCM3029_Sleep_Interface.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\ADuCM3029_Timer_Interface.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\App_Interface.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\LibIIO_Interface.c</name>
+  </file>
+  <file>
+    <name>$PROJ_DIR$\..\..\LibIIO_Utility.c</name>
+  </file>
   <file>
     <name>$PROJ_DIR$\..\..\main.c</name>
   </file>

@@ -1431,10 +1431,10 @@ ADI_PWR_RESULT adi_pwr_EnterLowPowerMode ( const ADI_PWR_POWER_MODE PowerMode,
             __DSB();  /* bus sync to insure register writes from interrupt handlers are always complete before WFI */
 
 			/* NOTE: aggressive compiler optimizations can muck up critical timing here, so reduce if hangs are present */
-
+           
             /* Wait for interrupt */
             __WFI();
-
+  
             /* Recycle critical section so that interrupts are dispatched.  This
              * allows *pbInterruptOccurred to be set during interrupt handling.
              */
